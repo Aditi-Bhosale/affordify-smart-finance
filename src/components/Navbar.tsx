@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Bell, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,124 +15,114 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { fetchAppData, AppData } from "@/lib/api";
 
-const notifications = [
-  {
-    id: 1,
-    title: "Payment Reminder",
-    message: "Credit card payment due in 3 days",
-    time: "2 hours ago",
-    type: "warning"
-  },
-  {
-    id: 2,
-    title: "Investment Update",
-    message: "Your portfolio gained 2.5% this week",
-    time: "1 day ago",
-    type: "success"
-  },
-  {
-    id: 3,
-    title: "Loan EMI",
-    message: "Monthly EMI deducted successfully",
-    time: "3 days ago",
-    type: "info"
-  }
-];
+export default function Navbar() {
+  const [notifications, setNotifications] = useState<AppData['notifications']>([]);
 
-export function Navbar() {
-  const handleSync = () => {
-    // Sync functionality
-    alert("Data synced successfully!");
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchAppData();
+        setNotifications(data.notifications);
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      }
+    };
 
-  const handleProfile = () => {
-    // Navigate to profile
-    window.location.href = "/profile";
-  };
+    loadData();
+  }, []);
 
   const handleLogout = () => {
-    // Logout functionality
+    alert("Logging out...");
     window.location.href = "/";
   };
 
+  const handleSync = () => {
+    alert("Syncing data...");
+  };
+
+  const getNotificationColor = (type: string) => {
+    switch (type) {
+      case "warning":
+        return "text-warning";
+      case "success":
+        return "text-success";
+      case "info":
+        return "text-info";
+      default:
+        return "text-muted-foreground";
+    }
+  };
+
   return (
-    <nav className="h-16 border-b bg-card flex items-center justify-between px-6">
-      <div className="flex items-center gap-4">
-        <h2 className="text-xl font-semibold text-foreground">
-          Financial Dashboard
-        </h2>
-      </div>
-
-      <div className="flex items-center gap-4">
-        {/* Notifications */}
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="relative">
-              <Bell className="h-5 w-5" />
-              {notifications.length > 0 && (
-                <Badge 
-                  variant="destructive" 
-                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                >
-                  {notifications.length}
-                </Badge>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80" align="end">
-            <div className="space-y-4">
-              <h4 className="font-semibold">Notifications</h4>
-              <div className="space-y-3">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className="p-3 rounded-lg border bg-card/50"
-                  >
-                    <div className="flex justify-between items-start mb-1">
-                      <h5 className="font-medium text-sm">{notification.title}</h5>
-                      <span className="text-xs text-muted-foreground">
-                        {notification.time}
-                      </span>
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex h-14 items-center px-6">
+        <div className="ml-auto flex items-center space-x-4">
+          {/* Notifications */}
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="sm" className="relative">
+                <Bell className="h-4 w-4" />
+                {notifications.length > 0 && (
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs">
+                    {notifications.length}
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">Notifications</h4>
+                <div className="space-y-2">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className="flex items-start space-x-2 rounded-md p-2 hover:bg-accent"
+                    >
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">{notification.title}</p>
+                        <p className={`text-xs ${getNotificationColor(notification.type)}`}>
+                          {notification.message}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{notification.time}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {notification.message}
-                    </p>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
 
-        {/* Profile Menu */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <User className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div>
-                <p className="font-medium">John Doe</p>
-                <p className="text-sm text-muted-foreground">john.doe@example.com</p>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleProfile}>
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleSync}>
-              Sync Data
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          {/* Profile Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>
+                <div>
+                  <p className="font-medium">John Doe</p>
+                  <p className="text-xs text-muted-foreground">john.doe@example.com</p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSync}>
+                Sync Data
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                Account Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout}>
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }

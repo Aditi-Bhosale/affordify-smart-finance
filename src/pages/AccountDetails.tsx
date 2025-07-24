@@ -1,56 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, Edit, Plus, Trash2 } from "lucide-react";
+import { fetchAppData, AppData } from "@/lib/api";
 
 export default function AccountDetails() {
   const [isEditing, setIsEditing] = useState(false);
-  const [accounts, setAccounts] = useState([
-    {
-      id: 1,
-      name: "HDFC Savings Account",
-      number: "****1234",
-      balance: "₹85,430",
-      type: "Savings",
-      status: "Active"
-    },
-    {
-      id: 2,
-      name: "ICICI Current Account",
-      number: "****5678",
-      balance: "₹1,60,250",
-      type: "Current",
-      status: "Active"
-    },
-    {
-      id: 3,
-      name: "SBI Fixed Deposit",
-      number: "****9012",
-      balance: "₹2,50,000",
-      type: "FD",
-      status: "Matured"
-    }
-  ]);
+  const [accounts, setAccounts] = useState<AppData['accounts']>([]);
+  const [suggestedAccounts, setSuggestedAccounts] = useState<AppData['suggestedAccounts']>([]);
+  const [loading, setLoading] = useState(true);
 
-  const suggestedAccounts = [
-    {
-      name: "AXIS Bank Savings",
-      type: "High Interest Savings",
-      rate: "7.5% p.a.",
-      benefit: "Zero balance account"
-    },
-    {
-      name: "HDFC Fixed Deposit",
-      type: "Term Deposit",
-      rate: "8.2% p.a.",
-      benefit: "Senior citizen rates"
-    }
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchAppData();
+        setAccounts(data.accounts);
+        setSuggestedAccounts(data.suggestedAccounts);
+      } catch (error) {
+        console.error('Error loading account data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleRefresh = () => {
-    // Simulate refresh
-    alert("Account details refreshed!");
+    loadData();
+  }, []);
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchAppData();
+      setAccounts(data.accounts);
+      setSuggestedAccounts(data.suggestedAccounts);
+      alert("Account details refreshed!");
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      alert("Failed to refresh data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = (id: number) => {
@@ -59,105 +48,116 @@ export default function AccountDetails() {
 
   const handleSave = () => {
     setIsEditing(false);
-    alert("Changes saved!");
   };
 
+  if (loading) {
+    return <div className="max-w-4xl mx-auto text-center py-8">Loading account details...</div>;
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Account Details</h1>
-          <p className="text-muted-foreground">Manage your bank accounts and deposits</p>
+          <p className="text-muted-foreground">Manage your bank accounts and finances</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleRefresh}>
+        <div className="space-x-2">
+          <Button onClick={handleRefresh} disabled={loading}>
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
           </Button>
-          <Button 
-            variant={isEditing ? "default" : "outline"} 
-            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            {isEditing ? "Save" : "Edit"}
-          </Button>
+          {isEditing ? (
+            <Button onClick={handleSave}>
+              Save
+            </Button>
+          ) : (
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditing(!isEditing)}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+          )}
         </div>
       </div>
 
       {/* Current Accounts */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Your Accounts</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {accounts.map((account) => (
-            <Card key={account.id} className="relative">
-              {isEditing && (
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 h-8 w-8"
-                  onClick={() => handleDelete(account.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{account.name}</CardTitle>
-                  <Badge variant={account.status === "Active" ? "default" : "secondary"}>
-                    {account.status}
-                  </Badge>
-                </div>
-                <CardDescription>{account.number}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Balance</span>
-                    <span className="font-semibold text-lg">{account.balance}</span>
+      <Card>
+        <CardHeader>
+          <CardTitle>Your Accounts</CardTitle>
+          <CardDescription>
+            All your connected bank accounts
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {accounts.map((account) => (
+              <Card key={account.id} className="relative">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{account.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{account.type}</p>
+                    </div>
+                    <Badge variant={account.status === "Active" ? "default" : "secondary"}>
+                      {account.status}
+                    </Badge>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Type</span>
-                    <Badge variant="outline">{account.type}</Badge>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    <p className="text-2xl font-bold text-success">{account.balance}</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+                  {isEditing && (
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => handleDelete(account.id)}
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Suggested Accounts */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Suggested for You</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {suggestedAccounts.map((suggestion, index) => (
-            <Card key={index} className="border-dashed border-2 border-muted">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Plus className="h-5 w-5 text-muted-foreground" />
-                  {suggestion.name}
-                </CardTitle>
-                <CardDescription>{suggestion.type}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Interest Rate</span>
-                    <span className="font-semibold text-success">{suggestion.rate}</span>
+      <Card>
+        <CardHeader>
+          <CardTitle>Suggested Accounts</CardTitle>
+          <CardDescription>
+            Recommended accounts to open for better savings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {suggestedAccounts.map((account) => (
+              <Card key={account.id} className="border-dashed">
+                <CardHeader>
+                  <CardTitle className="text-lg">{account.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground">{account.type}</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">{account.benefit}</p>
+                    <p className="font-semibold text-primary">{account.rate}</p>
+                    <Button size="sm" className="w-full">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Account
+                    </Button>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">Benefit</span>
-                    <span className="text-sm">{suggestion.benefit}</span>
-                  </div>
-                  <Button className="w-full mt-3" variant="outline">
-                    Learn More
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

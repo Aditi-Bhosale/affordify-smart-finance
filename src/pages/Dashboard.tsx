@@ -1,25 +1,33 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Sparkles } from "lucide-react";
+import { fetchAppData, AppData } from "@/lib/api";
 
 export default function Dashboard() {
   const [message, setMessage] = useState("");
-  const [chatHistory, setChatHistory] = useState([
-    {
-      type: "assistant",
-      content: "Hello! I'm your financial assistant. How can I help you manage your finances today?"
-    }
-  ]);
+  const [chatHistory, setChatHistory] = useState<Array<{ type: string; content: string }>>([]);
+  const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
+  const [stats, setStats] = useState<AppData['dashboard']['stats'] | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const suggestedQuestions = [
-    "How much can I save this month?",
-    "What's my spending pattern?",
-    "Show me my investment portfolio",
-    "Calculate my loan EMI",
-    "Plan my retirement savings"
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchAppData();
+        setChatHistory(data.dashboard.chatHistory);
+        setSuggestedQuestions(data.dashboard.suggestedQuestions);
+        setStats(data.dashboard.stats);
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -130,8 +138,8 @@ export default function Dashboard() {
               <CardTitle className="text-lg">Total Balance</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-success">₹2,45,680</p>
-              <p className="text-sm text-muted-foreground">+12% from last month</p>
+              <p className="text-2xl font-bold text-success">{stats?.totalBalance || "Loading..."}</p>
+              <p className="text-sm text-muted-foreground">{stats?.totalBalanceChange || "Loading..."}</p>
             </CardContent>
           </Card>
           
@@ -140,8 +148,8 @@ export default function Dashboard() {
               <CardTitle className="text-lg">Monthly Expenses</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-warning">₹45,230</p>
-              <p className="text-sm text-muted-foreground">18% of income</p>
+              <p className="text-2xl font-bold text-warning">{stats?.monthlyExpenses || "Loading..."}</p>
+              <p className="text-sm text-muted-foreground">{stats?.monthlyExpensesPercentage || "Loading..."}</p>
             </CardContent>
           </Card>
           
@@ -150,8 +158,8 @@ export default function Dashboard() {
               <CardTitle className="text-lg">Investments</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-info">₹1,25,000</p>
-              <p className="text-sm text-muted-foreground">+8.5% returns</p>
+              <p className="text-2xl font-bold text-info">{stats?.investments || "Loading..."}</p>
+              <p className="text-sm text-muted-foreground">{stats?.investmentReturns || "Loading..."}</p>
             </CardContent>
           </Card>
         </div>

@@ -1,0 +1,265 @@
+{
+  "dashboard": {
+    "chatHistory": [
+      {
+        "type": "assistant",
+        "content": "Hello! I'm your financial assistant. How can I help you manage your finances today?"
+      }
+    ],
+    "suggestedQuestions": [
+      "How much can I save this month?",
+      "What's my spending pattern?",
+      "Show me my investment portfolio",
+      "Calculate my loan EMI",
+      "Plan my retirement savings"
+    ],
+    "stats": {
+      "totalBalance": "₹2,45,680",
+      "totalBalanceChange": "+12% from last month",
+      "monthlyExpenses": "₹45,230",
+      "monthlyExpensesPercentage": "18% of income",
+      "investments": "₹1,25,000",
+      "investmentReturns": "+8.5% returns"
+    }
+  },
+  "accounts": [
+    {
+      "id": 1,
+      "name": "HDFC Savings",
+      "type": "Savings",
+      "balance": "₹1,25,680",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "ICICI Current",
+      "type": "Current", 
+      "balance": "₹85,420",
+      "status": "Active"
+    },
+    {
+      "id": 3,
+      "name": "SBI Fixed Deposit",
+      "type": "FD",
+      "balance": "₹2,00,000",
+      "status": "Matured"
+    }
+  ],
+  "suggestedAccounts": [
+    {
+      "id": 4,
+      "name": "Axis Bank Savings Plus",
+      "type": "Savings",
+      "benefit": "Higher interest rate",
+      "rate": "5.5% p.a."
+    },
+    {
+      "id": 5,
+      "name": "Kotak 811 Digital",
+      "type": "Digital Savings",
+      "benefit": "Zero balance account",
+      "rate": "4.0% p.a."
+    }
+  ],
+  "creditCards": [
+    {
+      "id": 1,
+      "name": "HDFC MoneyBack",
+      "limit": "₹2,00,000",
+      "used": "₹45,230",
+      "dueDate": "15th Jan",
+      "status": "Active"
+    },
+    {
+      "id": 2,
+      "name": "ICICI Amazon Pay",
+      "limit": "₹1,50,000",
+      "used": "₹22,150",
+      "dueDate": "20th Jan",
+      "status": "Active"
+    }
+  ],
+  "suggestedCreditCards": [
+    {
+      "id": 3,
+      "name": "SBI SimplyCLICK",
+      "benefit": "5X rewards on online spending",
+      "annualFee": "₹499"
+    },
+    {
+      "id": 4,
+      "name": "Axis Bank ACE",
+      "benefit": "2% cashback on Bill Payments",
+      "annualFee": "₹0"
+    }
+  ],
+  "loans": [
+    {
+      "id": 1,
+      "type": "Home Loan",
+      "bank": "HDFC Bank",
+      "amount": "₹25,00,000",
+      "remaining": "₹18,50,000",
+      "emi": "₹22,500",
+      "nextDue": "5th Feb",
+      "rate": "8.5%"
+    },
+    {
+      "id": 2,
+      "type": "Car Loan",
+      "bank": "ICICI Bank", 
+      "amount": "₹8,00,000",
+      "remaining": "₹3,20,000",
+      "emi": "₹15,200",
+      "nextDue": "12th Feb",
+      "rate": "9.2%"
+    },
+    {
+      "id": 3,
+      "type": "Personal Loan",
+      "bank": "SBI",
+      "amount": "₹2,00,000",
+      "remaining": "₹45,000",
+      "emi": "₹8,500",
+      "nextDue": "18th Feb",
+      "rate": "12.5%"
+    }
+  ],
+  "suggestedLoans": [
+    {
+      "id": 4,
+      "type": "Education Loan",
+      "bank": "Bank of Baroda",
+      "benefit": "Lower interest rate for education",
+      "rate": "7.5%",
+      "description": "Tax benefits available"
+    },
+    {
+      "id": 5,
+      "type": "Business Loan",
+      "bank": "Kotak Mahindra",
+      "benefit": "Quick approval process",
+      "rate": "11.0%",
+      "description": "Collateral-free up to ₹50L"
+    },
+    {
+      "id": 6,
+      "type": "Gold Loan",
+      "bank": "Muthoot Finance",
+      "benefit": "Instant approval",
+      "rate": "10.5%",
+      "description": "Against gold ornaments"
+    }
+  ],
+  "investments": [
+    {
+      "id": 1,
+      "name": "HDFC Top 100 Fund",
+      "type": "Mutual Fund",
+      "invested": "₹50,000",
+      "current": "₹62,500",
+      "returns": "+25.0%",
+      "sip": "₹5,000/month"
+    },
+    {
+      "id": 2,
+      "name": "Reliance Industries",
+      "type": "Stock",
+      "invested": "₹30,000",
+      "current": "₹28,500",
+      "returns": "-5.0%",
+      "quantity": "12 shares"
+    },
+    {
+      "id": 3,
+      "name": "SBI Bluechip Fund",
+      "type": "Mutual Fund",
+      "invested": "₹25,000",
+      "current": "₹27,750",
+      "returns": "+11.0%",
+      "sip": "₹2,500/month"
+    },
+    {
+      "id": 4,
+      "name": "TCS",
+      "type": "Stock",
+      "invested": "₹40,000",
+      "current": "₹45,200",
+      "returns": "+13.0%",
+      "quantity": "8 shares"
+    },
+    {
+      "id": 5,
+      "name": "PPF Account",
+      "type": "PPF",
+      "invested": "₹1,50,000",
+      "current": "₹1,80,000",
+      "returns": "+20.0%",
+      "maturity": "2030"
+    }
+  ],
+  "suggestedInvestments": [
+    {
+      "id": 6,
+      "name": "Axis Small Cap Fund",
+      "type": "Mutual Fund",
+      "category": "High Risk",
+      "expectedReturn": "15-18%",
+      "minSIP": "₹1,000"
+    },
+    {
+      "id": 7,
+      "name": "HDFC Bank Stock",
+      "type": "Stock",
+      "category": "Large Cap",
+      "expectedReturn": "12-15%",
+      "sector": "Banking"
+    },
+    {
+      "id": 8,
+      "name": "ELSS Tax Saver Fund",
+      "type": "Mutual Fund",
+      "category": "Tax Saving",
+      "expectedReturn": "12-14%",
+      "benefit": "80C Tax Benefit"
+    },
+    {
+      "id": 9,
+      "name": "Gold ETF",
+      "type": "ETF",
+      "category": "Commodity",
+      "expectedReturn": "8-10%",
+      "benefit": "Hedge against inflation"
+    }
+  ],
+  "onboarding": {
+    "apps": [
+      { "name": "Splitwise", "icon": "💰", "connected": false },
+      { "name": "Money Manager", "icon": "📊", "connected": false },
+      { "name": "Paytm", "icon": "💳", "connected": false }
+    ]
+  },
+  "notifications": [
+    {
+      "id": 1,
+      "title": "Payment Due",
+      "message": "HDFC Credit Card payment due tomorrow",
+      "type": "warning",
+      "time": "2 hours ago"
+    },
+    {
+      "id": 2,
+      "title": "Investment Alert", 
+      "message": "Your SIP will be deducted tomorrow",
+      "type": "info",
+      "time": "1 day ago"
+    },
+    {
+      "id": 3,
+      "title": "New Offer",
+      "message": "Special offer on personal loans",
+      "type": "success",
+      "time": "2 days ago"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Loader2 } from "lucide-react";
 import affordifyIcon from "@/assets/affordify-icon.png";
+import { fetchAppData } from "@/lib/api";
 
 type OnboardingStep = "aadhar" | "otp" | "success" | "apps" | "preferences" | "complete";
 
@@ -17,11 +18,26 @@ export default function Onboarding() {
   const [connectedApps, setConnectedApps] = useState<string[]>([]);
   const [expenseRatio, setExpenseRatio] = useState(50);
 
-  const apps = [
-    { name: "Splitwise", icon: "💰", connected: false },
-    { name: "Money Manager", icon: "📊", connected: false },
-    { name: "Paytm", icon: "📱", connected: false }
-  ];
+  const [apps, setApps] = useState<Array<{ name: string; icon: string; connected: boolean }>>([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await fetchAppData();
+        setApps(data.onboarding.apps);
+      } catch (error) {
+        console.error('Error loading onboarding data:', error);
+        // Fallback data if API fails
+        setApps([
+          { name: "Splitwise", icon: "💰", connected: false },
+          { name: "Money Manager", icon: "📊", connected: false },
+          { name: "Paytm", icon: "📱", connected: false }
+        ]);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const getProgress = () => {
     switch (currentStep) {
